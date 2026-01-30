@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+  import Footer from '$lib/components/bernd/Footer.svelte';
+  import VideoCarousel from '$lib/components/bernd/VideoCarousel.svelte';
 
   let heroSection: HTMLElement | undefined = undefined;
   let heroTitle: HTMLElement | undefined = undefined;
@@ -115,7 +117,7 @@
         <!-- LEFT: THE STORY (Hero) -->
         <div class="flex flex-col justify-center w-full lg:w-[50%]">
             <div class="flex items-center gap-3 mb-1 opacity-90">
-                <span class="text-[#FFB800] font-black text-lg">N</span>
+                <span class="text-[#FFB800] font-black text-lg">B</span>
                 <span class="text-white/60 font-bold text-[10px] tracking-[0.4em] uppercase">SERIES</span>
             </div>
 
@@ -243,6 +245,10 @@
   <!-- BOTTOM GRADIENT FOR SUBJECT ISOLATION -->
   <div class="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-black via-black/20 to-transparent z-10 pointer-events-none"></div>
 </div>
+
+<VideoCarousel on:openVideo={(e) => openVideo(e.detail)} />
+
+<Footer />
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;400;700;900&display=swap');
