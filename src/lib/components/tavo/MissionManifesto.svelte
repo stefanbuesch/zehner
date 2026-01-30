@@ -65,7 +65,7 @@
         <!-- Header -->
         <div class="p-8 border-b border-white/10 flex justify-between items-center bg-[#0a0a0a] z-20">
             <span class="text-[#FFB800] font-bold uppercase tracking-widest text-xs">Mission Manifesto</span>
-            <button on:click={closeStory} class="text-white/50 hover:text-white transition-colors">
+            <button on:click={closeStory} class="text-white/50 hover:text-white transition-colors" aria-label="Close Story">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>
