@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { createBrowserClient, isBrowser, parse, serialize } from '@supabase/ssr'
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { env } from '$env/dynamic/public'
 import { redirect } from '@sveltejs/kit'
 import type { LayoutLoad } from './$types'
 
@@ -14,7 +14,7 @@ export const load: LayoutLoad = async ({ fetch, data, depends, url }) => {
         throw redirect(303, `/auth/callback?code=${code}&next=${encodeURIComponent(next)}`)
     }
 
-    const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    const supabase = createBrowserClient(env.PUBLIC_SUPABASE_URL ?? '', env.PUBLIC_SUPABASE_ANON_KEY ?? '', {
         global: {
             fetch,
         },
