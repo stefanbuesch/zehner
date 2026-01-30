@@ -3,10 +3,10 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { supabaseAdmin } from '$lib/server/supabase';
-import { OPENAI_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 const openai = createOpenAI({
-    apiKey: OPENAI_API_KEY,
+    apiKey: env.OPENAI_API_KEY ?? '',
 });
 
 export const POST = async ({ request, locals: { user } }) => {
