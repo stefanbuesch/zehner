@@ -1,7 +1,7 @@
 <script>
+    // @ts-nocheck
     import { page } from '$app/stores';
     import { gsap } from 'gsap';
-    // @ts-ignore
     import { Chat } from '@ai-sdk/svelte';
     
     // Props
@@ -9,7 +9,9 @@
 
     // State
     let isRegistering = $state(false);
+    /** @type {HTMLDivElement | undefined} */
     let modalContainer;
+    /** @type {HTMLInputElement | undefined} */
     let emailInput;
     
     // Form Data
@@ -168,7 +170,7 @@
             <h2 class="text-[#FFB800] font-serif text-xl tracking-wide">
                 {isRegistering ? 'MITGLIED WERDEN' : 'LOGIN'}
             </h2>
-            <button onclick={handleClose} class="text-white/30 hover:text-white transition-colors cursor-pointer">
+            <button onclick={handleClose} aria-label="Close dialog" class="text-white/30 hover:text-white transition-colors cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>

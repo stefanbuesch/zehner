@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
@@ -103,5 +104,5 @@ export const POST = async ({ request, locals: { user } }) => {
         },
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
 };

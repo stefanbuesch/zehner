@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { streamText, convertToCoreMessages } from 'ai';
+import { streamText } from 'ai';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 
@@ -31,8 +31,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const result = await streamText({
         model: openai('gpt-4o'),
         system: systemPrompt,
-        messages: convertToCoreMessages(messages),
+        messages: messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
 };

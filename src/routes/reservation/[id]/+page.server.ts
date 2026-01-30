@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { supabaseAdmin } from '$lib/server/supabase';

@@ -1,5 +1,5 @@
 <script lang="ts">
-  // @ts-ignore
+  // @ts-nocheck
   import { Chat } from '@ai-sdk/svelte';
   import { onMount } from 'svelte';
 

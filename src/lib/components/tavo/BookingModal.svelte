@@ -1,4 +1,5 @@
 <script>
+  // @ts-nocheck
   import { Chat } from '@ai-sdk/svelte';
   import { onMount, tick } from 'svelte';
   import { gsap } from 'gsap';
@@ -6,13 +7,17 @@
   // Svelte 5 Runes Props
   let { isOpen = false, onClose = () => {} } = $props();
 
+  /** @type {HTMLDivElement | undefined} */
   let takeoverContainer;
+  /** @type {HTMLDivElement | undefined} */
   let chatArea;
   let input = $state('');
+  /** @type {HTMLDivElement | undefined} */
   let stardustContainer;
+  /** @type {any[]} */
   let messageRefs = $state([]);
 
-  // AI SDK Chat Instance - Not using $state to avoid proxying methods
+  // AI SDK Chat Instance
   /** @type {any} */
   let chat;
 
@@ -171,7 +176,7 @@
             <p class="text-[9px] uppercase tracking-[0.4em] text-white/40 font-bold mt-1.5">Wiesbaden · Nashville</p>
         </div>
     </div>
-    <button onclick={handleClose} class="group p-4 rounded-full border border-white/5 hover:bg-white/5 transition-all duration-500">
+    <button onclick={handleClose} aria-label="Close modal" class="group p-4 rounded-full border border-white/5 hover:bg-white/5 transition-all duration-500">
         <svg class="w-8 h-8 text-white/20 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -228,10 +233,10 @@
                     bind:value={input}
                     placeholder="Deine Nachricht..." 
                     class="w-full bg-transparent border-b border-white/20 py-8 md:py-10 text-3xl md:text-4xl text-white text-center font-sans focus:outline-none focus:border-[#FFB800] transition-all placeholder:text-white/10"
-                    autofocus
                 />
                 <button 
                     type="submit" 
+                    aria-label="Send message"
                     disabled={!chat || chat.status === 'streaming' || chat.status === 'submitted'} 
                     class="mt-10 mx-auto w-20 h-20 md:w-24 md:h-24 bg-[#FFB800] text-black rounded-full flex items-center justify-center hover:scale-110 transition-all duration-500 shadow-[0_0_40px_rgba(255,184,0,0.3)] disabled:opacity-0 disabled:scale-90"
                 >

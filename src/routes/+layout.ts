@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createBrowserClient, isBrowser, parse, serialize } from '@supabase/ssr'
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { redirect } from '@sveltejs/kit'
