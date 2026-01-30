@@ -1,16 +1,25 @@
 <script lang="ts">
   // @ts-ignore
-  import { useChat } from '@ai-sdk/svelte';
+  import { Chat } from '@ai-sdk/svelte';
+  import { onMount } from 'svelte';
 
-  const { input, handleSubmit, messages, status } = useChat({
-    api: '/api/chat',
-  });
-
+  /** @type {any} */
+  let chat;
+  
+  let input = $state('');
   let chatContainer: HTMLDivElement;
+
+  onMount(() => {
+    // @ts-ignore
+    chat = new Chat({
+        api: '/api/chat',
+    });
+  });
 
   // Auto-scroll to bottom on new messages
   $effect(() => {
-    if (chatContainer && $messages.length) {
+    // @ts-ignore
+    if (chatContainer && chat?.messages?.length) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   });
@@ -22,13 +31,20 @@
   ];
 
   function sendQuickAction(prompt: string) {
-    $input = prompt;
-    handleSubmit(new Event('submit'));
+    if (!chat) return;
+    input = prompt;
+    handleSubmit();
   }
 
-  function handleFormSubmit(e: Event) {
-    e.preventDefault();
-    handleSubmit(e); // Pass the event directly
+  async function handleSubmit(e?: Event) {
+    if (e) e.preventDefault();
+    if (!input.trim() || !chat) return; // @ts-ignore
+    
+    const content = input;
+    input = '';
+    
+    // @ts-ignore
+    await chat.sendMessage({ role: 'user', content });
   }
 </script>
 
@@ -50,13 +66,13 @@
       bind:this={chatContainer}
       class="bg-stone-900/50 border border-stone-800 rounded-lg p-4 mb-6 h-[400px] overflow-y-auto scroll-smooth"
     >
-      {#if $messages.length === 0}
+      {#if !chat || !chat.messages || chat.messages.length === 0}
         <div class="text-center text-stone-500 py-16">
           <div class="text-4xl mb-4">🎩</div>
           <p class="font-sans">Welcome to TAVO. How may I assist you?</p>
         </div>
       {:else}
-        {#each $messages as message}
+        {#each chat.messages as message}
           <div class="mb-4 {message.role === 'user' ? 'text-right' : 'text-left'}">
             <div class="inline-block max-w-[80%] px-4 py-3 rounded-lg {message.role === 'user' 
               ? 'bg-tavo-gold text-tavo-black' 
@@ -65,7 +81,7 @@
             </div>
           </div>
         {/each}
-        {#if $status === 'streaming' || $status === 'submitted'}
+        {#if chat.status === 'streaming' || chat.status === 'submitted'}
           <div class="text-left">
             <div class="inline-block px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg">
               <div class="flex items-center gap-2">
@@ -80,7 +96,7 @@
     </div>
 
     <!-- Quick Actions -->
-    {#if $messages.length === 0}
+    {#if !chat || !chat.messages || chat.messages.length === 0}
       <div class="flex flex-wrap gap-3 justify-center mb-6">
         {#each quickActions as action}
           <button
@@ -94,16 +110,16 @@
     {/if}
 
     <!-- Input Form -->
-    <form onsubmit={handleFormSubmit} class="flex gap-3">
+    <form onsubmit={handleSubmit} class="flex gap-3">
       <input
-        bind:value={$input}
+        bind:value={input}
         placeholder="Ask about reservations, availability, or the menu..."
         class="flex-1 px-4 py-3 bg-stone-900 border border-stone-700 rounded-lg text-white placeholder-stone-500 font-sans focus:outline-none focus:border-tavo-gold transition-colors"
-        disabled={$status === 'streaming' || $status === 'submitted'}
+        disabled={!chat || chat.status === 'streaming' || chat.status === 'submitted'}
       />
       <button
         type="submit"
-        disabled={$status === 'streaming' || $status === 'submitted' || !$input.trim()}
+        disabled={!chat || chat.status === 'streaming' || chat.status === 'submitted' || !input.trim()}
         class="px-6 py-3 bg-tavo-gold text-tavo-black font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
         Send
