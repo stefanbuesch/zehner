@@ -132,9 +132,31 @@ export const handle: Handle = async ({ event, resolve }) => {
     // We don't need to mutate event.url.pathname here anymore
     // event.locals.tenant is already set above which is enough for the app to know context.
 
-    return resolve(event, {
+    // 4. Resolve with caching headers
+    const response = await resolve(event, {
         filterSerializedResponseHeaders(name) {
             return name === 'content-range' || name === 'x-supabase-api-version'
         },
-    })
+    });
+
+    // 5. Add Cache-Control headers based on route type
+    const pathname = event.url.pathname;
+
+    // Routes that should NOT be cached (authenticated/dynamic)
+    const noCacheRoutes = ['/profile', '/login', '/register', '/auth', '/api'];
+    const isNoCache = noCacheRoutes.some(route => pathname.startsWith(route)) || user;
+
+    // Static/public pages that can be cached
+    const publicCacheRoutes = ['/', '/tavo', '/bernd', '/menu', '/about', '/impressum', '/datenschutz'];
+    const isPublicCacheable = publicCacheRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+    if (isNoCache) {
+        // No caching for authenticated users or sensitive routes
+        response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    } else if (isPublicCacheable) {
+        // CDN cache for 1 hour, browser cache for 5 minutes, stale-while-revalidate for smooth UX
+        response.headers.set('Cache-Control', 'public, s-maxage=3600, max-age=300, stale-while-revalidate=86400');
+    }
+
+    return response;
 }
