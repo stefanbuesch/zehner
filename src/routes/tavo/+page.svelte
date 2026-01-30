@@ -6,6 +6,7 @@
   import Services from '$lib/components/tavo/Services.svelte';
   import RecipeSection from '$lib/components/tavo/RecipeSection.svelte';
   import Testimonials from '$lib/components/tavo/Testimonials.svelte';
+  import Footer from '$lib/components/tavo/Footer.svelte';
   import FoodStoryModal from '$lib/components/tavo/FoodStoryModal.svelte';
 
   // Modal State
@@ -32,6 +33,7 @@
 <Services />
 <RecipeSection />
 <Testimonials />
+<Footer />
 
 <!-- Immersive Story Modal -->
 <FoodStoryModal 

@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { type Handle } from '@sveltejs/kit'
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
+import { env } from '$env/dynamic/public'
 
 const DEMO_PASSWORD = 'bernd2026';
 
@@ -107,7 +107,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     // 2. Supabase Logic
-    event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    event.locals.supabase = createServerClient(env.PUBLIC_SUPABASE_URL ?? '', env.PUBLIC_SUPABASE_ANON_KEY ?? '', {
         cookies: {
             getAll: () => event.cookies.getAll(),
             setAll: (cookiesToSet) => {
