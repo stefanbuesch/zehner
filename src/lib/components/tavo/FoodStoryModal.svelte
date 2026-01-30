@@ -2,40 +2,63 @@
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
 
-  // State
-  export let isOpen = false;
-  export let dish: any = null;
-  export let onClose: () => void;
+  // Props using Svelte 5 syntax
+  let { isOpen = false, dish = null, onClose }: { isOpen: boolean; dish: any; onClose: () => void } = $props();
 
-  let modalContent: HTMLElement;
-  let bgOverlay: HTMLElement;
+  let modalContent: HTMLElement = $state() as HTMLElement;
+  let bgOverlay: HTMLElement = $state() as HTMLElement;
 
   // Animations
-  $: if (isOpen) {
-    if (bgOverlay && modalContent) {
-      gsap.to(bgOverlay, { opacity: 1, duration: 0.5, pointerEvents: 'auto' });
-      gsap.fromTo(modalContent, 
-        { y: 50, opacity: 0, scale: 0.95 }, 
-        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
-      );
+  $effect(() => {
+    if (isOpen) {
+      if (bgOverlay && modalContent) {
+        gsap.to(bgOverlay, { opacity: 1, duration: 0.5, pointerEvents: 'auto' });
+        gsap.fromTo(modalContent, 
+          { y: 50, opacity: 0, scale: 0.95 }, 
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
+        );
+      }
+    } else if (bgOverlay && modalContent) {
+      gsap.to(bgOverlay, { opacity: 0, duration: 0.4, pointerEvents: 'none' });
+      gsap.to(modalContent, { y: 20, opacity: 0, scale: 0.95, duration: 0.4 });
     }
-  } else if (bgOverlay && modalContent) {
-    gsap.to(bgOverlay, { opacity: 0, duration: 0.4, pointerEvents: 'none' });
-    gsap.to(modalContent, { y: 20, opacity: 0, scale: 0.95, duration: 0.4 });
+  });
+
+  function handleBackdropClick() {
+    onClose();
+  }
+
+  function handleContentClick(e: MouseEvent) {
+    e.stopPropagation();
+  }
+
+  function handleBackdropKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') onClose();
   }
 </script>
 
 <div bind:this={bgOverlay} 
      class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md opacity-0 pointer-events-none flex items-center justify-center p-4 md:p-8"
-     on:click={onClose}
+     onclick={handleBackdropClick}
+     onkeydown={handleBackdropKeydown}
+     role="dialog"
+     aria-modal="true"
+     aria-label="Dish details"
+     tabindex="-1"
 >
   {#if dish}
     <div bind:this={modalContent} 
          class="relative w-full max-w-6xl h-[85vh] bg-[#0a0a0a] border border-[#FFB800]/20 rounded-lg overflow-hidden flex flex-col md:flex-row shadow-2xl"
-         on:click|stopPropagation
+         onclick={handleContentClick}
+         onkeydown={(e) => e.stopPropagation()}
+         role="document"
     >
       <!-- Close Button -->
-      <button class="absolute top-6 right-6 z-50 text-white/50 hover:text-[#FFB800] transition-colors" on:click={onClose}>
+      <button 
+        class="absolute top-6 right-6 z-50 text-white/50 hover:text-[#FFB800] transition-colors" 
+        onclick={onClose}
+        aria-label="Close dialog"
+      >
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
 

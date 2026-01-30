@@ -1,7 +1,7 @@
 <script lang="ts">
   const logoUrl = "/tavo_gold_logo.png";
   
-  let { user = null, openBooking = () => {}, openAuth = () => {} } = $props();
+  let { user = null, openBooking = (() => {}) as (() => void) | ((e?: any) => void), openAuth = (() => {}) as (() => void) | ((e?: any) => void) } = $props();
 </script>
 
 <nav class="fixed top-0 left-0 right-0 z-50 py-6 bg-gradient-to-b from-black via-black/80 to-transparent transition-all duration-300">

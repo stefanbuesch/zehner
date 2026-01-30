@@ -93,7 +93,11 @@
     <!-- Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
       {#each menuItems as item}
-        <div class="group cursor-pointer relative" on:click={() => handleSelect(item)}>
+        <button 
+          class="group cursor-pointer relative text-left w-full border-none p-0 bg-transparent block" 
+          onclick={() => handleSelect(item)}
+          type="button"
+        >
           
           <!-- Card Container -->
           <div class="relative w-full aspect-[4/5] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out bg-stone-900">
@@ -112,7 +116,7 @@
             </div>
           </div>
 
-        </div>
+        </button>
       {/each}
     </div>
   </div>

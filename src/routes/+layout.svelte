@@ -56,7 +56,7 @@
 
 <svelte:head>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Oswald:wght@400;500;700&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 </svelte:head>
 
@@ -65,5 +65,5 @@
 {/if}
 
 <BookingModal isOpen={isBookingOpen} onClose={() => isBookingOpen = false} />
-<AuthModal isOpen={isAuthOpen} onClose={() => isAuthOpen = false} initialMode={authMode} />
+<AuthModal isOpen={isAuthOpen} onClose={() => isAuthOpen = false} />
 {@render children()}

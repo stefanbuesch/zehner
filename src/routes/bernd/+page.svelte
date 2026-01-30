@@ -2,12 +2,12 @@
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
 
-  let heroSection: HTMLElement;
-  let heroTitle: HTMLElement;
-  let heroDescription: HTMLElement;
-  let heroButtons: HTMLElement;
-  let episodeCards: HTMLElement;
-  let diagonalMask: HTMLElement;
+  let heroSection: HTMLElement | undefined = undefined;
+  let heroTitle: HTMLElement | undefined = undefined;
+  let heroDescription: HTMLElement | undefined = undefined;
+  let heroButtons: HTMLElement | undefined = undefined;
+  let episodeCards: HTMLElement | undefined = undefined;
+  let diagonalMask: HTMLElement | undefined = undefined;
 
   // Video Modal State
   let showModal = $state(false);
@@ -19,27 +19,28 @@
   }
 
   onMount(() => {
+    if (!heroSection) return;
     const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
     
-    tl.from(heroSection, { opacity: 0, scale: 1.1, duration: 2 });
-    tl.from(diagonalMask, { xPercent: 100, duration: 1.5 }, "-=1.5");
-    tl.from(heroTitle, { 
+    tl.from(heroSection!, { opacity: 0, scale: 1.1, duration: 2 });
+    tl.from(diagonalMask!, { xPercent: 100, duration: 1.5 }, "-=1.5");
+    tl.from(heroTitle!, { 
       x: -100, 
       opacity: 0, 
       duration: 1.2,
       stagger: 0.1
     }, "-=1");
-    tl.from(heroDescription, { 
+    tl.from(heroDescription!, { 
       y: 30, 
       opacity: 0, 
       duration: 1
     }, "-=0.8");
-    tl.from(heroButtons, { 
+    tl.from(heroButtons!, { 
       y: 20, 
       opacity: 0, 
       duration: 0.8
     }, "-=0.6");
-    tl.from(episodeCards, { 
+    tl.from(episodeCards!, { 
       x: 50, 
       opacity: 0, 
       duration: 1,
@@ -48,7 +49,7 @@
   });
 </script>
 
-<svelte:window on:keydown={(e) => e.key === 'Escape' && (showModal = false)} />
+<svelte:window onkeydown={(e) => e.key === 'Escape' && (showModal = false)} />
 
 <!-- BERND DASHBOARD / NETFLIX STYLE -->
 <div class="relative min-h-screen w-full bg-[#0a0a0a] overflow-hidden font-sans selection:bg-[#FFB800] selection:text-black">
@@ -60,6 +61,7 @@
   <!-- YOUTUBE BACKGROUND -->
   <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden grayscale-[0.2] opacity-40">
     <iframe
+      title="Background Video"
       class="absolute top-1/2 left-1/2 w-[120vw] h-[120vh] -translate-x-1/2 -translate-y-1/2"
       src="https://www.youtube.com/embed/RQMhwkAhcHU?autoplay=1&mute=1&controls=0&loop=1&playlist=RQMhwkAhcHU&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1"
       frameborder="0"
@@ -76,7 +78,7 @@
     <!-- NAVBAR (Aligned with grid) -->
     <nav class="pt-8 flex items-center justify-between">
       <div class="flex items-center gap-16">
-        <a href="/tavo" class="group flex flex-col">
+        <a href="/" class="group flex flex-col">
             <span class="font-oswald text-2xl font-black text-white leading-none tracking-tight group-hover:text-[#FFB800] transition-colors">
                 BERND <span class="text-[#FFB800] group-hover:text-white">ZEHNER</span>
             </span>
@@ -138,8 +140,9 @@
             </div>
 
             <div bind:this={heroButtons} class="flex flex-wrap items-center gap-4 mt-10">
-                <button on:click={() => openVideo('RQMhwkAhcHU')}
-                   class="bg-white text-black px-10 py-3.5 rounded-full font-bold text-lg uppercase flex items-center gap-3 hover:bg-white/90 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] group">
+                <button onclick={() => openVideo('RQMhwkAhcHU')}
+                   type="button"
+                   class="bg-white text-black px-10 py-3.5 rounded-full font-bold text-lg uppercase flex items-center gap-3 hover:bg-white/90 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] group cursor-pointer inline-flex">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     Play
                 </button>
@@ -179,8 +182,9 @@
                     { id: '02', title: 'Game Over', time: '44 min', videoId: 'H_9Vp6b_JzI', img: 'https://img.youtube.com/vi/H_9Vp6b_JzI/hqdefault.jpg' },
                     { id: '03', title: 'Anatomy Lesson', time: '42 min', videoId: 'H7H4z_uB0k0', img: 'https://img.youtube.com/vi/H7H4z_uB0k0/hqdefault.jpg' }
                 ] as ep}
-                <button on:click={() => openVideo(ep.videoId)}
-                   class="group relative block w-full aspect-video rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500 text-left">
+                <button onclick={() => openVideo(ep.videoId)}
+                   type="button"
+                   class="group relative block w-full aspect-video rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500 text-left cursor-pointer">
                     <img src={ep.img} alt={ep.title} class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 opacity-60 group-hover:opacity-100" />
 
                     <!-- Card Overlay content (Bottom-aligned) -->
@@ -209,14 +213,18 @@
 
   <!-- IMMERSIVE VIDEO MODAL -->
   {#if showModal}
-    <div
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div
         class="fixed inset-0 z-[200] flex items-center justify-center p-6 md:p-12 lg:p-24 bg-black/90 backdrop-blur-2xl transition-all duration-500"
-        on:click|self={() => showModal = false}
+        onclick={() => showModal = false}
     >
         <div class="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(229,9,20,0.2)]">
             <button
-                class="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all backdrop-blur-md"
-                on:click={() => showModal = false}
+                type="button"
+                aria-label="Close Video"
+                class="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all backdrop-blur-md cursor-pointer"
+                onclick={() => showModal = false}
             >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>

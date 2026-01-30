@@ -87,7 +87,7 @@
     
     // Animate out before navigation
     const tl = gsap.timeline({
-      onComplete: () => goto(route)
+      onComplete: () => { goto(route); }
     });
     
     tl.to(landingSection, {

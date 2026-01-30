@@ -89,10 +89,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // 1. Tenant Detection
     const host = event.url.hostname;
-    const subdomain = host.split('.')[0];
+    let subdomain = host.split('.')[0];
+
+    // Handle localhost port if present in hostname (unlikely purely in hostname, but good safety)
+    if (subdomain.includes(':')) {
+        subdomain = subdomain.split(':')[0];
+    }
+
+    // Debugging
+    console.log(`[HOOKS] Host: ${host}, Subdomain: ${subdomain}, Path: ${event.url.pathname}`);
 
     if (subdomain === 'bernd' || subdomain === 'tavo') {
         event.locals.tenant = subdomain;
+        console.log(`[HOOKS] Tenant detected: ${subdomain}`);
     } else {
         event.locals.tenant = null;
     }
@@ -119,10 +128,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     event.locals.user = user
 
-    // 3. Transparent Internal Routing
-    if (event.locals.tenant && event.url.pathname === '/') {
-        event.url.pathname = `/${event.locals.tenant}`;
-    }
+    // 3. Routing is now handled by src/hooks.ts (reroute)
+    // We don't need to mutate event.url.pathname here anymore
+    // event.locals.tenant is already set above which is enough for the app to know context.
 
     return resolve(event, {
         filterSerializedResponseHeaders(name) {
