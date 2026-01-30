@@ -1,0 +1,24 @@
+{
+    "rewrites": [
+        {
+            "source": "/:path*",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "bernd.(?<domain>.*)"
+                }
+            ],
+            "destination": "/bernd/:path*"
+        },
+        {
+            "source": "/:path*",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "tavo.(?<domain>.*)"
+                }
+            ],
+            "destination": "/tavo/:path*"
+        }
+    ]
+}

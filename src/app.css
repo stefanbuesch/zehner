@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-asphalt: #0A0A0A;
+  --color-concrete: #1F1F1F;
+  --color-paper: #F5F5F7;
+  
+  --color-tavo-gold: #FFB800; /* Signal Yellow - Urban Luxury */
+  --color-tavo-gold-light: #FFCA33;
+  --color-tavo-black: #050505; 
+  
+  /* Warm palette - Chef's Universe */
+  --color-warm-amber: #E07B39; /* YouTube/content - burnt orange energy */
+  --color-warm-red: #C44536; /* Accent - paprika, chili */
+  --color-cream: #FAF3E8; /* Warm white */
+  --color-charcoal: #2A2A2A; /* Softer than pure black */
+  
+  /* Keep subtle accent for interactive elements */
+  --color-accent-teal: #4A9B8C; /* Muted, sophisticated */
+
+  /* Fonts */
+  --font-serif: "Oswald", sans-serif; /* Remapped for legacy compatibility, prefer font-condensed */
+  --font-sans: "Inter", sans-serif;
+  --font-graffiti: "Permanent Marker", cursive;
+  --font-condensed: "Oswald", sans-serif;
+  
+  /* Animations */
+  --animate-flicker: flicker 4s infinite;
+  --animate-grain: grain 8s steps(10) infinite;
+
+  @keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    20%, 24%, 55% {
+      opacity: 0.9;  /* Less intense flicker */
+      filter: brightness(1.1);
+    }
+  }
+
+  @keyframes grain {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -10%); }
+    20% { transform: translate(-15%, 5%); }
+    30% { transform: translate(7%, -25%); }
+    40% { transform: translate(-5%, 25%); }
+    50% { transform: translate(-15%, 10%); }
+    60% { transform: translate(15%, 0%); }
+    70% { transform: translate(0%, 15%); }
+    80% { transform: translate(3%, 35%); }
+    90% { transform: translate(-10%, 10%); }
+  }
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-asphalt text-paper overflow-x-hidden;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-asphalt;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-concrete rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-tavo-gold;
+  }
+}
+
+@layer utilities {
+  /* Aggressive Textures */
+  .bg-noise {
+    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  }
+  
+  .bg-concrete-wall {
+    background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+  }
+  
+  .bg-asphalt-pattern {
+    background-image: url("https://www.transparenttextures.com/patterns/asphalt.png");
+  }
+
+  /* Neon Effects - Sharper Core */
+  .neon-text-pink {
+    color: #fff;
+    text-shadow: 
+      0 0 2px #fff,    /* Sharp core */
+      0 0 5px #fff,
+      0 0 15px var(--color-neon-pink),
+      0 0 30px var(--color-neon-pink); /* Reduced bloom spread */
+  }
+
+  .neon-text-gold {
+    color: var(--color-tavo-gold-light);
+    text-shadow: 
+      0 0 2px #fff,
+      0 0 10px var(--color-tavo-gold),
+      0 0 20px var(--color-tavo-gold);
+  }
+
+  .neon-box-pink {
+    box-shadow: 
+      0 0 5px var(--color-neon-pink),
+      inset 0 0 5px var(--color-neon-pink);
+  }
+
+  /* Graffiti Effects */
+  .graffiti-drip {
+    filter: drop-shadow(2px 4px 0px rgba(0,0,0,0.8));
+    transform: rotate(-2deg);
+  }
+  
+  .blend-screen {
+    mix-blend-mode: screen;
+  }
+  
+  .blend-overlay {
+    mix-blend-mode: overlay;
+  }
+}
