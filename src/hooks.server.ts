@@ -107,26 +107,40 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     // 2. Supabase Logic
-    event.locals.supabase = createServerClient(env.PUBLIC_SUPABASE_URL ?? '', env.PUBLIC_SUPABASE_ANON_KEY ?? '', {
-        cookies: {
-            getAll: () => event.cookies.getAll(),
-            setAll: (cookiesToSet) => {
-                cookiesToSet.forEach(({ name, value, options }) => {
-                    event.cookies.set(name, value, {
-                        ...options,
-                        path: '/',
-                        domain: host.includes('localhost') ? '.localhost' : undefined
-                    })
-                })
-            },
-        },
-    })
+    const hasSupabaseKeys = !!(env.PUBLIC_SUPABASE_URL && env.PUBLIC_SUPABASE_ANON_KEY);
 
-    const {
-        data: { user },
-    } = await event.locals.supabase.auth.getUser()
+    if (hasSupabaseKeys) {
+        try {
+            event.locals.supabase = createServerClient(env.PUBLIC_SUPABASE_URL!, env.PUBLIC_SUPABASE_ANON_KEY!, {
+                cookies: {
+                    getAll: () => event.cookies.getAll(),
+                    setAll: (cookiesToSet) => {
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            event.cookies.set(name, value, {
+                                ...options,
+                                path: '/',
+                                domain: host.includes('localhost') ? '.localhost' : undefined
+                            })
+                        })
+                    },
+                },
+            })
 
-    event.locals.user = user
+            const {
+                data: { user },
+            } = await event.locals.supabase.auth.getUser()
+
+            event.locals.user = user
+        } catch (err) {
+            console.error('[HOOKS] Failed to initialize Supabase client:', err);
+            event.locals.supabase = null;
+            event.locals.user = null;
+        }
+    } else {
+        console.warn('[HOOKS] Supabase environment variables missing. Auth features disabled.');
+        event.locals.supabase = null;
+        event.locals.user = null;
+    }
 
     // 3. Routing is now handled by src/hooks.ts (reroute)
     // We don't need to mutate event.url.pathname here anymore

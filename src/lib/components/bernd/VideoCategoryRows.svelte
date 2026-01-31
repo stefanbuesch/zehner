@@ -173,80 +173,71 @@
             <!-- CARD WRAPPER -->
             <div 
               class="relative flex-none w-[200px] md:w-[240px] aspect-video z-10 transition-all duration-300"
-              style="z-index: {hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex ? 50 : 1};"
+              style="z-index: {hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex ? 100 : 1};"
             >
               <!-- INTERACTIVE CARD -->
               <div
                 id="card-{catIndex}-{vidIndex}"
-                class="absolute inset-0 w-full h-full bg-[#141414] rounded shadow-md overflow-hidden transition-all duration-300 ease-out origin-center focus:outline-none group/inner cursor-pointer"
-                class:scale-[1.5]={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
+                class="absolute inset-0 w-full h-full bg-[#141414] rounded shadow-md overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] focus:outline-none group/inner cursor-pointer"
+                class:scale-[1.6]={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
                 class:z-50={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
-                class:shadow-[0_20px_60px_rgba(0,0,0,0.95)]={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
+                class:shadow-[0_30px_100px_rgba(0,0,0,1)]={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
                 class:rounded-lg={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}
+                style="transform-origin: {vidIndex === 0 ? 'left' : (vidIndex === category.videos.length - 1 ? 'right' : 'center')};"
                 onclick={() => openVideo(video)}
                 onmouseenter={() => handleCardEnter(catIndex, vidIndex)}
                 onmouseleave={handleCardLeave}
               >
                 <!-- COVER IMAGE -->
                 <div class="relative w-full h-full">
-                  <img src={video.cover} alt={video.title} class="w-full h-full object-cover transition-transform duration-700 {hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex ? 'scale-110 brightness-75' : 'scale-100'}" />
+                  <img src={video.cover} alt={video.title} class="w-full h-full object-cover transition-all duration-700 {hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex ? 'scale-110 brightness-[0.4] blur-[1px]' : 'scale-100'}" />
                   
-                  <!-- HOVER UI CONTAINER -->
-                  <div class="absolute inset-0 flex flex-col justify-between p-4 opacity-0 transition-opacity duration-300"
+                  <!-- HOVER UI CONTAINER - INTENSE REWORK -->
+                  <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 transition-all duration-300"
                        class:opacity-100={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}>
                      
-                     <!-- TOP: Series/Episode Info -->
-                     <div class="transform -translate-y-2 transition-transform duration-300 delay-100"
-                          class:translate-y-0={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}>
-                        <h5 class="text-white font-bold text-[8px] uppercase tracking-widest drop-shadow-md">
-                           {video.type} <span class="text-white/60">#1</span>
-                        </h5>
+                     <!-- Play Pulse Trigger (Center) -->
+                     <div class="w-16 h-16 rounded-full bg-[#FFB800] text-black flex items-center justify-center mb-4 transform scale-50 opacity-0 transition-all duration-500 delay-100 group-hover/inner:scale-100 group-hover/inner:opacity-100 shadow-[0_0_30px_rgba(255,184,0,0.5)]">
+                        <svg class="w-8 h-8 ml-1 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                      </div>
 
-                     <!-- MIDDLE: Big Title (Centered/Left) -->
-                     <div class="flex-grow flex items-center transform scale-90 transition-transform duration-300 delay-150"
-                          class:scale-100={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}>
-                        <h3 class="font-oswald text-white font-black text-xl leading-[0.9] uppercase tracking-tighter drop-shadow-xl text-left line-clamp-3">
+                     <!-- Centered Title Section -->
+                     <div class="space-y-1 transform translate-y-4 transition-all duration-500 delay-200 group-hover/inner:translate-y-0">
+                        <h3 class="font-oswald text-white font-black text-2xl leading-[0.85] uppercase tracking-tighter drop-shadow-[0_4px_12px_rgba(0,0,0,1)]">
                            {video.title}
                         </h3>
-                     </div>
-
-                     <!-- BOTTOM: Controls & Meta -->
-                     <div class="transform translate-y-2 transition-transform duration-300 delay-200"
-                          class:translate-y-0={hoveredCategoryIndex === catIndex && hoveredVideoIndex === vidIndex}>
-                        
-                        <!-- Buttons Row -->
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-                               <svg class="w-4 h-4 ml-0.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <!-- "Add" Button -->
-                            <div class="w-8 h-8 rounded-full border-2 border-white/50 text-white flex items-center justify-center hover:border-white hover:bg-white/10 transition-all">
-                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                            </div>
-                        </div>
-
-                        <!-- Meta Info Row -->
-                        <div class="flex items-center gap-3 text-[10px] font-bold">
-                            <!-- Match Score (Green) -->
-                            <span class="text-[#46d369]">{video.views}</span> <!-- Using views prop for match score/trending -->
-                            
-                            <span class="border border-white/40 text-white/90 px-1 rounded-[2px]">{video.rating}</span>
-                            <span class="text-white/60">{video.duration}</span>
-                            <span class="border border-white/40 text-[8px] px-1 rounded-[2px] uppercase">HD</span>
-                        </div>
-                        
-                        <!-- Genre Tags -->
-                        <div class="flex gap-2 mt-1.5 text-[9px] text-white/50 font-medium">
-                            <span>Kochen</span>
-                            <span class="bg-white/30 w-1 h-1 rounded-full self-center"></span>
+                        <div class="flex items-center justify-center gap-2 text-[8px] font-bold text-[#FFB800] tracking-[0.2em] uppercase">
                             <span>{video.type}</span>
-                            <span class="bg-white/30 w-1 h-1 rounded-full self-center"></span>
-                            <span>Lifestyle</span>
+                            <span class="w-1 h-1 bg-white/30 rounded-full"></span>
+                            <span class="text-white/60">{video.year}</span>
+                        </div>
+                     </div>
+
+                     <!-- Metabar (Aligned Center Bottom) -->
+                     <div class="absolute bottom-6 w-full px-4 flex flex-col items-center gap-2 opacity-0 transform translate-y-2 transition-all duration-500 delay-300 group-hover/inner:opacity-100 group-hover/inner:translate-y-0">
+                        
+                        <div class="flex items-center gap-3 text-[10px] font-black">
+                            <span class="text-[#46d369]">{video.views}</span>
+                            <span class="px-1.5 py-0.5 border border-white/40 text-white rounded-[2px]">{video.rating}</span>
+                            <span class="text-white/80">{video.duration}</span>
                         </div>
 
+                        <!-- Genre Microtags -->
+                        <div class="flex gap-2 text-[7px] text-white/40 uppercase tracking-widest font-bold">
+                            <span>REZEPT</span>
+                            <span>•</span>
+                            <span>ACTION</span>
+                            <span>•</span>
+                            <span>BERND</span>
+                        </div>
                      </div>
+
                   </div>
+
+                  <!-- TOP BADGE (Always visible or pop in) -->
+                  {#if video.views === 'New'}
+                    <div class="absolute top-2 left-2 px-2 py-0.5 bg-[#FFB800] text-black text-[8px] font-black rounded shadow-lg z-20">NEW</div>
+                  {/if}
                 </div>
               </div>
 

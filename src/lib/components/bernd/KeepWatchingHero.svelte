@@ -45,7 +45,7 @@
   
   <!-- Section Title -->
   <div class="flex items-center gap-4 mb-8">
-      <div class="w-1 h-8 bg-red-600 rounded-sm"></div>
+      <div class="w-1 h-8 bg-[#FFB800] rounded-sm shadow-[0_0_10px_rgba(255,184,0,0.5)]"></div>
       <h2 class="font-oswald text-2xl md:text-3xl font-bold text-white tracking-wide">Keep watching</h2>
   </div>
 

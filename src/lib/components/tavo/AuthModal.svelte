@@ -93,28 +93,32 @@
         errorMessage = '';
         successMessage = '';
 
-        const supabase = $page.data.supabase;
-
         try {
             if (isRegistering) {
-                // Register
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: { data: { full_name: name } }
+                // Register via API
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, name })
                 });
                 
-                if (error) throw error;
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Registrierung fehlgeschlagen');
                 
                 successMessage = "Registrierung erfolgreich! Bitte überprüfe deine E-Mails.";
                 signalConcierge('SUCCESS_REGISTER');
                 isRegistering = false;
                 
             } else {
-                // Login
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                // Login via API
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-                if (error) throw error;
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Anmeldung fehlgeschlagen');
 
                 successMessage = "Willkommen zurück.";
                 signalConcierge('SUCCESS_LOGIN');

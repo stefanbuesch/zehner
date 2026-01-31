@@ -243,10 +243,10 @@
               onmouseenter={() => hoveredCard = i}
               onmouseleave={() => hoveredCard = null}
               class="video-card group relative flex-shrink-0 w-[220px] md:w-[260px] lg:w-[300px] aspect-[2/3] rounded-2xl overflow-hidden 
-                     transition-transform duration-500 ease-out snap-start select-none text-left
+                     transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] snap-start select-none text-left
                      shadow-[0_8px_30px_rgba(0,0,0,0.4)]
-                     {hoveredCard === i ? 'scale-105 z-20 shadow-[0_20px_60px_rgba(255,184,0,0.2)]' : ''}
-                     {hoveredCard !== null && hoveredCard !== i ? 'opacity-40 scale-95 blur-[1px]' : ''}"
+                     {hoveredCard === i ? 'scale-125 z-50 shadow-[0_30px_100px_rgba(0,0,0,1)]' : 'z-10'}"
+              style="transform-origin: {i === 0 ? 'left' : (i === filteredVideos.length - 1 ? 'right' : 'center')};"
             >
               <!-- THUMBNAIL -->
               <img 
@@ -254,60 +254,62 @@
                 onerror={handleImgError}
                 alt={video.title}
                 class="w-full h-full object-cover transition-all duration-700
-                       {hoveredCard === i ? 'grayscale-0 scale-110' : 'grayscale-[0.4] scale-105'}"
+                       {hoveredCard === i ? 'scale-110 brightness-[0.4] blur-[1px]' : 'scale-105 grayscale-[0.3]'}"
               />
               
               <!-- TOP 10 BADGE -->
               {#if video.top10}
-                <div class="absolute top-4 right-4 bg-[#FFB800] text-black text-[9px] font-black px-3 py-1.5 rounded uppercase tracking-wider shadow-lg">
+                <div class="absolute top-4 right-4 bg-[#FFB800] text-black text-[9px] font-black px-3 py-1.5 rounded uppercase tracking-wider shadow-lg z-20 transition-all duration-300 {hoveredCard === i ? 'scale-75 translate-x-1 -translate-y-1' : ''}">
                   Top 10
                 </div>
               {/if}
               
-              <!-- CINEMATIC GRADIENT OVERLAY -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent 
-                          {hoveredCard === i ? 'opacity-95' : 'opacity-90'} transition-opacity"></div>
-              
-              <!-- DIAGONAL ACCENT -->
-              <div class="absolute bottom-0 left-0 w-1.5 h-full bg-gradient-to-t from-[#FFB800] via-[#FFB800]/50 to-transparent 
-                          {hoveredCard === i ? 'opacity-100' : 'opacity-0'} transition-all duration-500"></div>
-              
-              <!-- CONTENT -->
-              <div class="absolute inset-x-0 bottom-0 p-5 flex flex-col items-start text-left">
-                <!-- TYPE BADGE -->
-                <div class="flex items-center gap-2 mb-0.5">
-                  <span class="text-[#FFB800] font-black text-lg">B</span>
-                  <span class="text-white/40 text-[8px] font-bold tracking-[0.3em] uppercase">{video.type}</span>
-                </div>
-                
-                <!-- TITLE -->
-                <h3 class="font-oswald text-2xl md:text-3xl font-black text-white leading-[0.95] uppercase tracking-tight text-left"
-                    style="text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
-                  {video.title}
-                </h3>
-                
-                <!-- METADATA (visible on hover) -->
-                <div class="flex items-center gap-3 mt-3 transition-all duration-300
-                            {hoveredCard === i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}">
-                  <span class="text-white/60 text-[10px] font-bold">{video.duration}</span>
-                  <span class="text-white/30">•</span>
-                  <span class="text-white/60 text-[10px] font-bold">{video.year}</span>
-                </div>
+              <!-- CENTERAL CONTENT (Hover Only) -->
+              <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center opacity-0 transition-all duration-300"
+                   class:opacity-100={hoveredCard === i}>
+                 
+                 <!-- Play Pulse Button (Matches Category Row) -->
+                 <div class="w-16 h-16 rounded-full bg-[#FFB800] text-black flex items-center justify-center mb-6 transform scale-50 opacity-0 transition-all duration-500 delay-100 group-hover:scale-100 group-hover:opacity-100 shadow-[0_0_40px_rgba(255,184,0,0.6)]">
+                    <svg class="w-8 h-8 ml-1 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                 </div>
+
+                 <!-- Title Section -->
+                 <div class="space-y-2 transform translate-y-4 transition-all duration-500 delay-200 group-hover:translate-y-0">
+                    <h3 class="font-oswald text-white font-black text-3xl leading-[0.85] uppercase tracking-tighter drop-shadow-[0_4px_15px_rgba(0,0,0,1)]">
+                       {video.title}
+                    </h3>
+                    <div class="flex items-center justify-center gap-2 text-[10px] font-bold text-[#FFB800] tracking-[0.2em] uppercase">
+                        <span>{video.type}</span>
+                        <span class="w-1 h-1 bg-white/30 rounded-full"></span>
+                        <span class="text-white/60">{video.year}</span>
+                    </div>
+                 </div>
+
+                 <!-- Bottom Metadata -->
+                 <div class="absolute bottom-8 w-full px-6 flex flex-col items-center gap-2 opacity-0 transform translate-y-2 transition-all duration-500 delay-300 group-hover:opacity-100 group-hover:translate-y-0 text-white">
+                    <div class="flex items-center gap-4 text-[11px] font-black">
+                        <span class="text-[#46d369]">98% Match</span>
+                        <span class="px-2 py-0.5 border border-white/40 rounded-[2px]">{video.duration}</span>
+                        <span class="border border-white/40 px-1 rounded-[2px] uppercase">HD</span>
+                    </div>
+                 </div>
               </div>
-              
-              <!-- HOVER PLAY BUTTON -->
-              <div class="absolute inset-0 flex items-center justify-center transition-all duration-300
-                          {hoveredCard === i ? 'opacity-100' : 'opacity-0'}">
-                <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 
-                            transform transition-transform duration-500
-                            {hoveredCard === i ? 'scale-100' : 'scale-75'}">
-                  <div class="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent translate-x-1"></div>
+
+              <!-- STATIC CONTENT (Default View) -->
+              <div class="absolute inset-x-0 bottom-0 p-6 flex flex-col items-start transition-opacity duration-300"
+                   class:opacity-0={hoveredCard === i}>
+                <div class="flex items-center gap-2 mb-1">
+                   <div class="w-1 h-3 bg-[#FFB800]"></div>
+                   <span class="text-white/40 text-[9px] font-bold tracking-widest uppercase">{video.type}</span>
                 </div>
+                <h3 class="font-oswald text-2xl font-black text-white uppercase tracking-tight line-clamp-2">{video.title}</h3>
               </div>
+
             </button>
           {/each}
         {/if}
       </div>
+
     </div>
     
     <!-- PROGRESS BAR (Dynamic) -->
