@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import { Chat } from '@ai-sdk/svelte';
+  import { tavoChat } from '$lib/stores/tavoChat.svelte.ts';
   import { onMount, tick } from 'svelte';
   import { gsap } from 'gsap';
 
@@ -11,49 +11,43 @@
   let takeoverContainer;
   /** @type {HTMLDivElement | undefined} */
   let chatArea;
-  let input = $state('');
   /** @type {HTMLDivElement | undefined} */
   let stardustContainer;
+  /** @type {HTMLInputElement | undefined} */
+  let inputEl;
+
   /** @type {any[]} */
   let messageRefs = $state([]);
-
-  // AI SDK Chat Instance
-  /** @type {any} */
-  let chat;
+  let inputValue = $state('');
 
   onMount(() => {
-    // @ts-ignore
-    chat = new Chat({
-      api: '/api/chat',
-      initialMessages: [
-        { id: '1', role: 'system', content: 'You are the TAVO Host. Be professional, friendly, and helpful. You are talking to a restaurant customer.' },
-        { id: '2', role: 'assistant', content: "Willkommen im TAVO. Ich bin dein Host.\n\nSchön, dass du da bist. Möchtest du einen Tisch reservieren oder kann ich dir bei etwas anderem behilflich sein?" }
-      ]
-    });
+    if (!isOpen && takeoverContainer) {
+        gsap.set(takeoverContainer, { y: '100%', opacity: 0 });
+    }
   });
 
   async function handleSubmit(e) {
-    // @ts-ignore
-    if (e) e.preventDefault();
-    if (!input.trim() || !chat) return;
-    const content = input;
-    input = '';
-    // Call sendMessage on the raw instance
-    // Match signature (CreateUIMessage or { text })
-    await chat.sendMessage({ role: 'user', content });
+      if (e) e.preventDefault();
+      if (!inputValue.trim()) return;
+      
+      const content = inputValue;
+      inputValue = ''; // Clear input immediately
+      
+      // Use the global chat instance
+      await tavoChat.append({ role: 'user', content });
   }
 
-  // ROBUST SCROLL LOCK V3
+  // Watch for open/close to trigger animations
   $effect(() => {
     if (isOpen) {
-      const scrollY = window.scrollY;
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100vw';
-      document.body.style.height = '100vh';
-      document.body.style.touchAction = 'none';
+      if (typeof window !== 'undefined') {
+        const scrollY = window.scrollY;
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed'; // Robust scroll lock
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100vw';
+      }
 
       if (takeoverContainer) {
           gsap.fromTo(takeoverContainer, 
@@ -62,7 +56,6 @@
           );
           
           if (stardustContainer) {
-              // @ts-ignore
               gsap.to(stardustContainer, {
                   backgroundPosition: '150px 150px',
                   duration: 120,
@@ -71,27 +64,36 @@
               });
           }
       }
+      
+      // Focus input
+      setTimeout(() => inputEl?.focus(), 500);
+
     } else {
-      const scrollY = document.body.style.top;
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
-      document.body.style.touchAction = '';
-      if (scrollY) {
-          window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
+       // Cleanup Scroll Lock
+       if (typeof window !== 'undefined' && document.body.style.position === 'fixed') {
+        const scrollY = document.body.style.top;
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        if (scrollY) {
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
+       }
+       
+       if (takeoverContainer && !isOpen) {
+           // Ensure hidden logic is handled by handleClose calls usually, but valid constraint
+       }
     }
   });
 
   // CINEMATIC FLOATING STORY LOGIC
   $effect(() => {
-    if (chat && chat.messages && chat.messages.length) {
+    if (tavoChat.messages && tavoChat.messages.length) {
         // @ts-ignore
-        const messages = chat.messages.filter(m => m.role !== 'system');
-        const latestIndex = messages.length - 1;
+        const currentMessages = tavoChat.messages.filter(m => m.role !== 'system');
+        const latestIndex = currentMessages.length - 1;
 
         tick().then(() => {
             messageRefs.forEach((el, i) => {
@@ -150,17 +152,17 @@
   }
 
   function handleKeydown(e) {
-    // @ts-ignore
-    if (e.key === 'Escape') handleClose();
+    if (e.key === 'Escape' && isOpen) handleClose();
   }
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
-{#if isOpen}
 <div 
   bind:this={takeoverContainer} 
   class="fixed inset-0 z-[500] bg-black flex flex-col overflow-hidden"
+  class:pointer-events-none={!isOpen}
+  class:opacity-0={!isOpen}
 >
   <!-- ATMOSPHERIC BACKGROUND -->
   <div bind:this={stardustContainer} class="absolute inset-0 z-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] pointer-events-none"></div>
@@ -176,7 +178,7 @@
             <p class="text-[9px] uppercase tracking-[0.4em] text-white/40 font-bold mt-1.5">Wiesbaden · Nashville</p>
         </div>
     </div>
-    <button onclick={handleClose} aria-label="Close modal" class="group p-4 rounded-full border border-white/5 hover:bg-white/5 transition-all duration-500">
+    <button onclick={handleClose} aria-label="Close modal" class="group p-4 rounded-full border border-white/5 hover:bg-white/5 transition-all duration-500 cursor-pointer">
         <svg class="w-8 h-8 text-white/20 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -187,8 +189,8 @@
   <main class="relative z-10 flex-1 flex flex-col max-w-5xl mx-auto w-full overflow-hidden">
     
     <div bind:this={chatArea} class="flex-1 overflow-y-auto px-6 py-20 md:px-20 space-y-6 no-scrollbar scroll-smooth">
-        {#if chat && chat.messages}
-            {#each chat.messages.filter((/** @type {any} */ m) => m.role !== 'system') as message, i (message.id)}
+        {#if tavoChat.messages}
+            {#each tavoChat.messages.filter((/** @type {any} */ m) => m.role !== 'system') as message, i (message.id)}
                 <div 
                     bind:this={messageRefs[i]}
                     class="flex {message.role === 'user' ? 'justify-end' : 'justify-center text-center'} py-4"
@@ -209,7 +211,7 @@
                 </div>
             {/each}
 
-            {#if chat.status === 'streaming' || chat.status === 'submitted'}
+            {#if tavoChat.status === 'streaming' || tavoChat.status === 'submitted'}
                 <div class="flex justify-center py-8">
                     <div class="flex gap-2.5 opacity-40">
                         <div class="w-2 h-2 bg-[#FFB800] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
@@ -218,10 +220,6 @@
                     </div>
                 </div>
             {/if}
-        {:else}
-            <div class="h-full flex items-center justify-center">
-                <p class="text-white/10 text-xs uppercase tracking-[1em] animate-pulse">Wird geladen...</p>
-            </div>
         {/if}
     </div>
 
@@ -230,15 +228,16 @@
         <form onsubmit={handleSubmit} class="relative w-full max-w-3xl mx-auto flex flex-col items-center">
             <div class="w-full relative">
                 <input 
-                    bind:value={input}
+                    bind:this={inputEl}
+                    bind:value={inputValue}
                     placeholder="Deine Nachricht..." 
                     class="w-full bg-transparent border-b border-white/20 py-8 md:py-10 text-3xl md:text-4xl text-white text-center font-sans focus:outline-none focus:border-[#FFB800] transition-all placeholder:text-white/10"
                 />
                 <button 
                     type="submit" 
                     aria-label="Send message"
-                    disabled={!chat || chat.status === 'streaming' || chat.status === 'submitted'} 
-                    class="mt-10 mx-auto w-20 h-20 md:w-24 md:h-24 bg-[#FFB800] text-black rounded-full flex items-center justify-center hover:scale-110 transition-all duration-500 shadow-[0_0_40px_rgba(255,184,0,0.3)] disabled:opacity-0 disabled:scale-90"
+                    disabled={tavoChat.status === 'streaming' || tavoChat.status === 'submitted'} 
+                    class="mt-10 mx-auto w-20 h-20 md:w-24 md:h-24 bg-[#FFB800] text-black rounded-full flex items-center justify-center hover:scale-110 transition-all duration-500 shadow-[0_0_40px_rgba(255,184,0,0.3)] disabled:opacity-0 disabled:scale-90 cursor-pointer"
                 >
                     <svg class="w-8 h-8 md:w-10 md:h-10 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                 </button>
@@ -248,7 +247,6 @@
 
   </main>
 </div>
-{/if}
 
 <style>
   .no-scrollbar::-webkit-scrollbar {
@@ -261,6 +259,9 @@
   
   .font-serif {
     font-family: 'Playfair Display', serif;
+  }
+  .font-graffiti {
+    font-family: 'Permanent Marker', cursive;
   }
 
   @keyframes bounce {

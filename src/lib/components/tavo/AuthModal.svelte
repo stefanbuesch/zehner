@@ -10,9 +10,9 @@
     // State
     let isRegistering = $state(false);
     /** @type {HTMLDivElement | undefined} */
-    let modalContainer;
+    let modalContainer = $state(undefined);
     /** @type {HTMLInputElement | undefined} */
-    let emailInput;
+    let emailInput = $state(undefined);
     
     // Form Data
     let email = $state('');

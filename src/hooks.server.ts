@@ -158,7 +158,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Routes that should NOT be cached (authenticated/dynamic)
     const noCacheRoutes = ['/profile', '/login', '/register', '/auth', '/api'];
-    const isNoCache = noCacheRoutes.some(route => pathname.startsWith(route)) || user;
+    const isNoCache = noCacheRoutes.some(route => pathname.startsWith(route)) || event.locals.user;
 
     // Static/public pages that can be cached
     const publicCacheRoutes = ['/', '/tavo', '/bernd', '/menu', '/about', '/impressum', '/datenschutz'];
