@@ -3,6 +3,8 @@
   import { gsap } from 'gsap';
   import Footer from '$lib/components/bernd/Footer.svelte';
   import VideoCarousel from '$lib/components/bernd/VideoCarousel.svelte';
+  import VideoPlayerModal from '$lib/components/bernd/VideoPlayerModal.svelte';
+  import VideoCategoryRows from '$lib/components/bernd/VideoCategoryRows.svelte';
 
   let heroSection: HTMLElement | undefined = undefined;
   let heroTitle: HTMLElement | undefined = undefined;
@@ -13,10 +15,10 @@
 
   // Video Modal State
   let showModal = $state(false);
-  let activeVideoId = $state('');
+  let activeVideo = $state<any>(null);
 
-  function openVideo(videoId: string) {
-    activeVideoId = videoId;
+  function openVideo(video: any) {
+    activeVideo = video;
     showModal = true;
   }
 
@@ -153,6 +155,20 @@
                     More Info
                 </button>
             </div>
+
+            <!-- HERO NAVIGATION TABS (Transition) -->
+            <div class="flex items-center gap-8 mt-16 border-b border-white/10 w-fit pb-4 md:mt-24">
+               <div class="relative cursor-pointer group">
+                  <span class="text-white font-bold text-sm uppercase tracking-wider">Overview</span>
+                  <div class="absolute -bottom-[17px] left-0 w-full h-[3px] bg-[#FFB800] shadow-[0_-2px_10px_rgba(255,184,0,0.5)]"></div>
+               </div>
+               <div class="relative cursor-pointer group">
+                  <span class="text-white/40 font-bold text-sm uppercase tracking-wider group-hover:text-white transition-colors">Episodes</span>
+               </div>
+               <div class="relative cursor-pointer group">
+                  <span class="text-white/40 font-bold text-sm uppercase tracking-wider group-hover:text-white transition-colors">Details</span>
+               </div>
+            </div>
         </div>
 
         <!-- RIGHT: THE SIDECARD (Exact Money Heist Parity) -->
@@ -214,32 +230,16 @@
   </div>
 
   <!-- IMMERSIVE VIDEO MODAL -->
-  {#if showModal}
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div
-        class="fixed inset-0 z-[200] flex items-center justify-center p-6 md:p-12 lg:p-24 bg-black/90 backdrop-blur-2xl transition-all duration-500"
-        onclick={() => showModal = false}
-    >
-        <div class="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(229,9,20,0.2)]">
-            <button
-                type="button"
-                aria-label="Close Video"
-                class="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all backdrop-blur-md cursor-pointer"
-                onclick={() => showModal = false}
-            >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <iframe
-                class="w-full h-full"
-                src="https://www.youtube.com/embed/{activeVideoId}?autoplay=1&rel=0&modestbranding=1"
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-            ></iframe>
-        </div>
-    </div>
+  <!-- IMMERSIVE VIDEO MODAL -->
+  {#if showModal && activeVideo}
+    <VideoPlayerModal
+      videoId={activeVideo.id || activeVideo}
+      videoTitle={activeVideo.title || 'Video'}
+      videoType={activeVideo.type || 'VIDEO'}
+      videoDuration={activeVideo.duration}
+      videoYear={activeVideo.year}
+      onClose={() => showModal = false}
+    />
   {/if}
 
   <!-- BOTTOM GRADIENT FOR SUBJECT ISOLATION -->
@@ -247,6 +247,7 @@
 </div>
 
 <VideoCarousel on:openVideo={(e) => openVideo(e.detail)} />
+<VideoCategoryRows on:openVideo={(e) => openVideo(e.detail)} />
 
 <Footer />
 

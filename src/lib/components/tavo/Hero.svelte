@@ -1,40 +1,48 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+  import VideoLoop from '$lib/components/tavo/VideoLoop.svelte';
 
+  // Element Refs
   let heroContainer: HTMLElement;
   let title: HTMLElement;
   let subtext: HTMLElement;
   let mainDish: HTMLElement;
-  let floatingElements: NodeListOf<Element>;
+  // floatingElements selector handled by gsap.utils.toArray
 
   onMount(() => {
+    // --- GSAP ANIMATIONS ---
     const tl = gsap.timeline();
 
     // 1. Text reveals
-    tl.from(title.querySelectorAll('.word'), {
-      y: 100,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.15,
-      ease: "power4.out"
-    });
+    if (title) {
+        tl.from(title.querySelectorAll('.word'), {
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: "power4.out"
+        });
+    }
 
-    tl.from(subtext, {
-      y: 20,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.5");
+    if (subtext) {
+        tl.from(subtext, {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+        }, "-=0.5");
+    }
 
     // 2. Main Dish Scale/Rotate pop
-    tl.from(mainDish, {
-      scale: 0.8,
-      rotation: -5,
-      opacity: 0,
-      duration: 1.2,
-      ease: "elastic.out(1, 0.7)"
-    }, "-=0.8");
+    if (mainDish) {
+        tl.from(mainDish, {
+        scale: 0.8,
+        rotation: -5,
+        duration: 1.2,
+        ease: "elastic.out(1, 0.7)"
+        }, "-=0.8");
+    }
 
     // 3. Floating elements entrance
     gsap.utils.toArray('.floating-item').forEach((el: any, i) => {
@@ -57,10 +65,8 @@
         delay: gsap.utils.random(0, 2)
       });
     });
-  });
 
-  // Helper to split text for animation would be complex in Svelte markup, 
-  // so we'll just animate the blocks or lines.
+  });
 </script>
 
   <section bind:this={heroContainer} class="relative w-full pt-40 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center">
@@ -91,28 +97,31 @@
     </p>
 
     <!-- Main Dish Visualization -->
-    <div bind:this={mainDish} class="relative w-full max-w-[800px] mx-auto z-20">
-      <!-- Dish Image -->
-      <div class="relative aspect-square w-[80%] md:w-[60%] mx-auto">
-        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&q=90" 
-             alt="Healthy Bowl" 
-             class="w-full h-full object-contain drop-shadow-2xl scale-110 relative z-20" />
-        
-        <!-- Shadow -->
-        <div class="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[70%] h-[20%] bg-black/60 blur-3xl z-10 rounded-full"></div>
+    <div bind:this={mainDish} class="relative w-full max-w-[600px] mx-auto z-20">
+      
+      <!-- MAIN LOOP: 29:38 - 30:08 (Duration 30s) -->
+      <div class="relative aspect-video w-full mx-auto rounded-2xl overflow-hidden shadow-2xl z-20 bg-transparent">
+         <VideoLoop videoId="TbcFhw9uJmI" startSeconds={1778} endSeconds={1808} scale={1.15} />
       </div>
 
-      <!-- Floating Polaroid/Card Decorations -->
-      <!-- Left Card (Menu Item) -->
-      <div class="floating-item absolute top-[20%] left-0 w-32 md:w-48 bg-white p-2 md:p-3 rounded shadow-xl transform -rotate-12 z-10">
-        <img src="https://images.unsplash.com/photo-1603133872878-684f10842741?w=300&q=80" class="w-full aspect-[4/3] object-cover rounded mb-2" alt="Dish" />
-        <div class="h-2 w-3/4 bg-gray-200 rounded mb-1"></div>
-        <div class="h-2 w-1/2 bg-gray-200 rounded"></div>
+      <!-- Shadow -->
+      <div class="absolute -bottom-[10%] left-1/2 -translate-x-1/2 w-[80%] h-[20%] bg-black/60 blur-[40px] z-10 rounded-full"></div>
+
+
+      <!-- Floating Video Loops -->
+      
+      <!-- Left Card (Menu Item) - LOOP 2: 24:01 (1441s) - 24:16 (1456s) (Veggie/Water scene? Or just prep) -->
+      <div class="floating-item absolute top-[15%] -left-12 md:-left-52 w-28 md:w-44 aspect-[4/3] bg-white p-1 md:p-1.5 rounded shadow-xl transform -rotate-12 z-10 opacity-90 hover:scale-105 transition-transform duration-500 overflow-hidden">
+        <div class="w-full h-full rounded overflow-hidden relative grayscale-[30%] hover:grayscale-0 transition-all duration-500">
+           <VideoLoop videoId="TbcFhw9uJmI" startSeconds={1441} endSeconds={1456} scale={1.4} />
+        </div>
       </div>
 
-      <!-- Right Card (Menu Item) -->
-      <div class="floating-item absolute top-[10%] right-0 md:-right-10 w-28 md:w-40 bg-[#f4f4f4] p-2 md:p-3 shadow-xl transform rotate-6 z-10">
-        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" class="w-full aspect-square object-cover mb-2" alt="Dish" />
+      <!-- Right Card (Menu Item) - LOOP 3: 28:00 (1680s) - 28:15 (1695s) (Another scene) -->
+      <div class="floating-item absolute top-[5%] -right-10 md:-right-48 w-24 md:w-40 aspect-square bg-[#f4f4f4] p-1 md:p-1.5 shadow-xl transform rotate-6 z-10 opacity-90 hover:scale-105 transition-transform duration-500 overflow-hidden">
+         <div class="w-full h-full object-cover mb-2 rounded overflow-hidden relative grayscale-[30%] hover:grayscale-0 transition-all duration-500">
+             <VideoLoop videoId="TbcFhw9uJmI" startSeconds={1680} endSeconds={1695} scale={1.5} />
+         </div>
       </div>
 
       <!-- Scattered Spices -->
