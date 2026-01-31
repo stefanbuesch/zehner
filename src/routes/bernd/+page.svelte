@@ -226,8 +226,8 @@
                 </button>
                 {/each}
             </div>
-            </div>
-    </div> <!-- End Content Wrapper -->
+        </div>
+    </main>
 
     <!-- IMMERSIVE VIDEO MODAL -->
     {#if showModal && activeVideo}
@@ -244,7 +244,8 @@
     <!-- BOTTOM GRADIENT FOR SUBJECT ISOLATION -->
     <div class="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-black via-black/20 to-transparent z-10 pointer-events-none"></div>
 
-</div>
+  </div> <!-- End Content Wrapper (81) -->
+</div> <!-- End Outer Container (60) -->
 
 <!-- NEW SECTION: Keep Watching & Carousels -->
 <div class="relative w-full bg-[#0a0a0a] z-40 pb-0">
