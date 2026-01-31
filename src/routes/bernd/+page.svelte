@@ -3,6 +3,7 @@
   import { gsap } from 'gsap';
   import Footer from '$lib/components/bernd/Footer.svelte';
   import VideoCarousel from '$lib/components/bernd/VideoCarousel.svelte';
+  import KeepWatchingHero from '$lib/components/bernd/KeepWatchingHero.svelte';
   import VideoPlayerModal from '$lib/components/bernd/VideoPlayerModal.svelte';
   import VideoCategoryRows from '$lib/components/bernd/VideoCategoryRows.svelte';
 
@@ -225,13 +226,11 @@
                 </button>
                 {/each}
             </div>
-        </div>
-    </main>
-  </div>
+            </div>
+    </div> <!-- End Content Wrapper -->
 
-  <!-- IMMERSIVE VIDEO MODAL -->
-  <!-- IMMERSIVE VIDEO MODAL -->
-  {#if showModal && activeVideo}
+    <!-- IMMERSIVE VIDEO MODAL -->
+    {#if showModal && activeVideo}
     <VideoPlayerModal
       videoId={activeVideo.id || activeVideo}
       videoTitle={activeVideo.title || 'Video'}
@@ -240,17 +239,27 @@
       videoYear={activeVideo.year}
       onClose={() => showModal = false}
     />
-  {/if}
+    {/if}
 
-  <!-- BOTTOM GRADIENT FOR SUBJECT ISOLATION -->
-  <div class="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-black via-black/20 to-transparent z-10 pointer-events-none"></div>
+    <!-- BOTTOM GRADIENT FOR SUBJECT ISOLATION -->
+    <div class="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-black via-black/20 to-transparent z-10 pointer-events-none"></div>
+
 </div>
 
-<VideoCarousel on:openVideo={(e) => openVideo(e.detail)} />
-<VideoCategoryRows on:openVideo={(e) => openVideo(e.detail)} />
+<!-- NEW SECTION: Keep Watching & Carousels -->
+<div class="relative w-full bg-[#0a0a0a] z-40 pb-0">
+    <!-- VIDEO CAROUSEL SECTION -->
+    <VideoCarousel on:openVideo={(e) => openVideo(e.detail)} />
+    
+    <!-- CATEGORY ROWS -->
+    <VideoCategoryRows on:openVideo={(e) => openVideo(e.detail)} />
 
-<Footer />
-
+    <!-- KEEP WATCHING SECTION -->
+    <KeepWatchingHero />
+    
+    <!-- FOOTER -->
+    <Footer />
+</div>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;400;700;900&display=swap');
   

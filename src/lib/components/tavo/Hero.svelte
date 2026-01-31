@@ -110,17 +110,21 @@
 
       <!-- Floating Video Loops -->
       
-      <!-- Left Card (Menu Item) - LOOP 2: 24:01 (1441s) - 24:16 (1456s) (Veggie/Water scene? Or just prep) -->
-      <div class="floating-item absolute top-[15%] -left-12 md:-left-52 w-28 md:w-44 aspect-[4/3] bg-white p-1 md:p-1.5 rounded shadow-xl transform -rotate-12 z-10 opacity-90 hover:scale-105 transition-transform duration-500 overflow-hidden">
-        <div class="w-full h-full rounded overflow-hidden relative grayscale-[30%] hover:grayscale-0 transition-all duration-500">
+      <!-- Left Card (Menu Item) - LOOP 2 -->
+      <div class="floating-item absolute top-[15%] -left-12 md:-left-52 w-28 md:w-44 aspect-[4/3] rounded-2xl shadow-2xl transform -rotate-12 z-10 hover:scale-105 transition-transform duration-500 overflow-hidden ring-1 ring-white/10 bg-white/5 backdrop-blur-md p-1.5 md:p-2">
+        <div class="w-full h-full rounded-xl overflow-hidden relative grayscale-[20%] hover:grayscale-0 transition-all duration-500 shadow-inner">
            <VideoLoop videoId="TbcFhw9uJmI" startSeconds={1441} endSeconds={1456} scale={1.4} />
+           <!-- Subtle inner vignette -->
+           <div class="absolute inset-0 pointer-events-none border border-white/5 rounded-xl"></div>
         </div>
       </div>
 
-      <!-- Right Card (Menu Item) - LOOP 3: 28:00 (1680s) - 28:15 (1695s) (Another scene) -->
-      <div class="floating-item absolute top-[5%] -right-10 md:-right-48 w-24 md:w-40 aspect-square bg-[#f4f4f4] p-1 md:p-1.5 shadow-xl transform rotate-6 z-10 opacity-90 hover:scale-105 transition-transform duration-500 overflow-hidden">
-         <div class="w-full h-full object-cover mb-2 rounded overflow-hidden relative grayscale-[30%] hover:grayscale-0 transition-all duration-500">
+      <!-- Right Card (Menu Item) - LOOP 3 -->
+      <div class="floating-item absolute top-[5%] -right-10 md:-right-48 w-24 md:w-40 aspect-square rounded-2xl shadow-2xl transform rotate-6 z-10 hover:scale-105 transition-transform duration-500 overflow-hidden ring-1 ring-white/10 bg-white/5 backdrop-blur-md p-1.5 md:p-2">
+         <div class="w-full h-full object-cover rounded-xl overflow-hidden relative grayscale-[20%] hover:grayscale-0 transition-all duration-500 shadow-inner">
              <VideoLoop videoId="TbcFhw9uJmI" startSeconds={1680} endSeconds={1695} scale={1.5} />
+             <!-- Subtle inner vignette -->
+             <div class="absolute inset-0 pointer-events-none border border-white/5 rounded-xl"></div>
          </div>
       </div>
 
